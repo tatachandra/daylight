@@ -1,0 +1,4 @@
+import { sqliteTable, text, integer, index, primaryKey } from 'drizzle-orm/sqlite-core';
+export const wellnessEntries=sqliteTable('wellness_entries',{id:text('id').primaryKey(),userId:text('user_id').notNull(),day:text('day').notNull(),kind:text('kind').notNull(),dataJson:text('data_json').notNull(),createdAt:text('created_at').notNull(),updatedAt:text('updated_at').notNull()},table=>[index('idx_wellness_entries_user_day').on(table.userId,table.day)]);
+export const wellnessSettings=sqliteTable('wellness_settings',{userId:text('user_id').primaryKey(),dataJson:text('data_json').notNull(),updatedAt:text('updated_at').notNull()});
+export const wellnessDays=sqliteTable('wellness_days',{userId:text('user_id').notNull(),day:text('day').notNull(),complete:integer('complete').notNull().default(0)},table=>[primaryKey({columns:[table.userId,table.day]})]);
