@@ -3,11 +3,12 @@ import "./globals.css";
 import {DeviceTimeProvider} from './device-time';
 
 export const metadata: Metadata = {
-  title: "Daylight — Your Daily News",
-  description: "Your daily news feed: world headlines, technology, AI, and market coverage with original sources.",
+  title: "My Day Harbor — News, Wellbeing & Growth",
+  description: "Your daily place for personalized news, meals and fitness, and communities for personal growth.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: {url: "/balanced-leaves.png", type: "image/png"},
+    shortcut: "/balanced-leaves.png",
+    apple: "/balanced-leaves.png",
   },
 };
 

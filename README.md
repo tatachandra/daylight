@@ -1,10 +1,10 @@
-# Daylight
+# [My Day Harbor](https://mydayharbor.com/)
 
-A personal news, meals and fitness web app built with Vinext and React, deployed with Sites.
+A public, noncommercial personal news, wellbeing and growth website built with Vinext and React, deployed with Sites.
 
-[Open the live Daylight website](https://daylight-personal-news.d55rbvzrks.chatgpt.site)
+Live website: [mydayharbor.com](https://mydayharbor.com/) · [www.mydayharbor.com](https://www.mydayharbor.com/)
 
-This repository is a source snapshot of the published app. The live website continues to run on Sites; pushing here does not automatically deploy it.
+The GitHub repository contains the website source. The live website runs on Sites; pushing to GitHub does not automatically deploy it.
 
 ## Current features
 - Original linked headlines from BBC News and The Economic Times RSS feeds.
@@ -12,10 +12,11 @@ This repository is a source snapshot of the published app. The live website cont
 - Browser-local topic preferences; the news feed remains public.
 - Past-seven-days filter, publication dates with timezone, refresh every five minutes while visible.
 - Graceful partial-feed failures and cached fallback within a running server isolate.
-- Oat cream background, white article cards and authentic publisher-provided images.
+- Oat cream background, white article cards, publisher-provided images and the Balanced Leaves logo.
 - Accessible topic and preference controls; responsive desktop and mobile layout.
 - Device-local dates and times, including daylight-saving changes and daily log dates.
 - WebMCP read_current_news and set_news_interests when the browser supports them.
+- Public Communities tab with eight external startup programs and networks, practical guides and a six-stage idea-to-launch path. Browsing requires no sign-in; participation happens on the linked organizations' websites.
 
 - Private Meals & Fitness tab with ChatGPT sign-in, D1 meal/portion/activity logs, editable goals and dietary exclusions.
 - USDA reference estimates for protein, fiber, magnesium, 13 vitamins (with documented form limits), amino acids, energy and other nutrients. Missing values remain unknown and each nutrient reports food coverage.
@@ -49,6 +50,6 @@ node scripts/check-wellness.mjs
 
 ## Hosting your own copy
 
-The live deployment identifier has been removed from this export. To deploy a separate copy, configure a new Sites project and its database binding. Production sign-in relies on the Sites identity gateway; another hosting setup must replace that trusted identity integration before exposing private log routes.
+The GitHub export omits the live deployment identifier. To deploy a separate copy, configure a new Sites project and its database binding. Production sign-in relies on the Sites identity gateway; another hosting setup must replace that trusted identity integration before exposing private log routes.
 
-Local runtime files, environment secrets, private database contents and user logs are not included in this repository. News photos remain at their original publishers rather than being bundled here. Existing third-party license notices and data-source attribution are included.
+Local runtime files, environment secrets, private database contents and user logs are not included in the GitHub repository. News photos remain at their original publishers rather than being bundled here. Existing third-party license notices and data-source attribution are included.

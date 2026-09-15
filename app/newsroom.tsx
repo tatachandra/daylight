@@ -1,8 +1,9 @@
 'use client';
+import BrandMark from '@/app/brand-mark';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import {LocalTimestamp,LocalToday} from './device-time';
-import { ArrowUpRight, SlidersHorizontal, RotateCw, Globe2, Sparkles, Cpu, TrendingUp, Sun, Check, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, SlidersHorizontal, RotateCw, Globe2, Sparkles, Cpu, TrendingUp, Check, ChevronRight } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -49,7 +50,7 @@ export default function Newsroom({initial}:{initial:NewsData}){
     return()=>lifecycle.abort();
   },[]);
   const preferences=<Dialog><DialogTrigger asChild><Button variant="outline" className="customize"><SlidersHorizontal size={16}/> Your interests</Button></DialogTrigger><DialogContent><DialogHeader><DialogTitle>Make it your daily read.</DialogTitle><DialogDescription>Choose at least one topic. These preferences stay in this browser.</DialogDescription></DialogHeader><div className="topic-options">{TOPICS.map(topic=><label key={topic}><Checkbox checked={topics.includes(topic)} disabled={topics.length===1&&topics.includes(topic)} onCheckedChange={()=>toggleTopic(topic)}/><span>{topic}</span></label>)}</div><p className="small-copy">Your “For you” feed shows stories matching these topics, newest first. No account needed.</p></DialogContent></Dialog>;
-  return <div className="site-shell"><header className="masthead"><a href="/" className="wordmark"><Sun strokeWidth={2.3}/><span>daylight<span className="brand-period">.</span></span></a><PrimaryNav active="news"/>{preferences}</header>
+  return <div className="site-shell"><header className="masthead"><a href="/" className="wordmark site-brand"><BrandMark/><span>My Day Harbor</span></a><PrimaryNav active="news"/>{preferences}</header>
   <main><div className="page-heading"><div><p className="eyebrow"><LocalToday/></p><h1>Your daily perspective<span>.</span></h1><p>The world, your interests, and what’s happening next.</p></div><Button variant="ghost" onClick={refresh} disabled={refreshing} className="refresh-button"><RotateCw className={refreshing?'spinning':''} size={16}/>{refreshing?'Refreshing':'Refresh feed'}</Button></div>
   <Tabs value={active} onValueChange={value=>{setActive(value);setLimit(12);}} className="news-tabs"><TabsList variant="line" className="topic-tabs">{['For you',...TOPICS].map(topic=><TabsTrigger key={topic} value={topic}>{topic==='For you'&&<Sparkles size={15}/>} {topic}</TabsTrigger>)}</TabsList>
   <div className="feed-status"><span>PAST 7 DAYS · REFRESHES EVERY 5 MINUTES</span><span>{data.stale?'Last successful update':'Checked'} <LocalTimestamp value={data.checkedAt}/></span></div>
@@ -59,6 +60,6 @@ export default function Newsroom({initial}:{initial:NewsData}){
   </TabsContent>)}</section>
   <aside className="right-rail"><section className="interests-card"><p className="eyebrow">YOUR DAILY MIX</p><h2>A feed that follows<br/>your curiosity.</h2><div className="interest-list">{topics.map(topic=>{const Icon=topicIcons[topic];return <button key={topic} onClick={()=>{setActive(topic);setLimit(12);}}><Icon size={18}/><span>{topic}</span><ChevronRight size={15}/></button>;})}</div><p className="small-copy">Picked by you. Ordered by recency.</p></section>
   <section className="market-card"><div className="rail-section-title"><TrendingUp size={19}/><h2>Market lens</h2></div><p>Follow the stories behind the markets.</p><button onClick={()=>setActive('U.S. markets')}><span>United States<small>Business & company headlines</small></span><ArrowUpRight size={18}/></button><button onClick={()=>setActive('India markets')}><span>India<small>The Economic Times · markets</small></span><ArrowUpRight size={18}/></button><p className="small-copy market-note">News coverage, not live stock prices or a top-gainers ranking.</p></section>
-  <section className="reading-note"><span className="mini-sun"><Sun size={23}/></span><h3>Stay curious.<br/>Keep your day.</h3><p>A useful daily read, with room for everything else.</p></section></aside></div></Tabs>
-  </main><footer><a className="footer-brand" href="/">daylight.</a><p>Headlines from <a href="https://www.bbc.com/news" target="_blank" rel="noopener noreferrer">BBC News</a> and <a href="https://economictimes.indiatimes.com/markets" target="_blank" rel="noopener noreferrer">The Economic Times</a>. Full stories open at the publisher.</p><span>For curious minds.</span></footer></div>;
+  <section className="reading-note"><span className="mini-sun"><BrandMark small/></span><h3>Stay curious.<br/>Keep your day.</h3><p>A useful daily read, with room for everything else.</p></section></aside></div></Tabs>
+  </main><footer><a className="footer-brand" href="/">My Day Harbor</a><p>Headlines from <a href="https://www.bbc.com/news" target="_blank" rel="noopener noreferrer">BBC News</a> and <a href="https://economictimes.indiatimes.com/markets" target="_blank" rel="noopener noreferrer">The Economic Times</a>. Full stories open at the publisher.</p><span>For curious minds.</span></footer></div>;
 }

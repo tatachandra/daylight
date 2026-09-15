@@ -71,3 +71,4 @@
 @media(prefers-reduced-motion:reduce){.original-daylight .op-news-card{transition:none}}
 
 .original-daylight .op-freshness{font-size:.8125rem;color:var(--op-muted);margin:-5px 0 17px;line-height:1.6}
+@media(max-width:760px){.original-daylight .op-app-nav{overflow-x:auto;max-width:100%;gap:6px}.original-daylight .op-app-nav a{font-size:13px;gap:5px;padding:11px 8px;white-space:nowrap;flex:1 0 auto}.original-daylight .op-app-nav svg{width:15px;height:15px;flex-shrink:0}}
