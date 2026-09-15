@@ -1,0 +1,11 @@
+export type PortionCertainty = 'measured' | 'estimated' | 'unknown';
+export type Food = {id:string;name:string;source:string;release:string;nutrients:Record<string,number>;portions:{label:string;grams:number}[]};
+export type MealItem = {foodId:string|null;name:string;grams:number|null;portion:string;certainty:PortionCertainty};
+export type MealData = {type:'meal';meal:'Breakfast'|'Lunch'|'Dinner'|'Snack';items:MealItem[];notes:string};
+export type WorkoutData = {type:'workout';activity:string;minutes:number|null;steps:number|null;calories:number|null;notes:string};
+export type LogEntry = {id:string;day:string;data:MealData|WorkoutData;createdAt:string};
+export type WellnessSettings = {targets:{protein:number;fiber:number;magnesium:number};diet:'any'|'vegetarian'|'vegan';avoid:string[]};
+export const DEFAULT_SETTINGS:WellnessSettings={targets:{protein:50,fiber:28,magnesium:420},diet:'any',avoid:[]};
+export type WellnessState={entries:LogEntry[];completeDays:string[];settings:WellnessSettings};
+export function localDay(date=new Date()){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
+export function daysBefore(day:string,n:number){const date=new Date(day+'T12:00:00');date.setDate(date.getDate()-n);return localDay(date);}
