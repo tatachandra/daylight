@@ -6,6 +6,10 @@ Live website: [mydayharbor.com](https://mydayharbor.com/) · [www.mydayharbor.co
 
 The GitHub repository contains the website source. The live website runs on Sites; pushing to GitHub does not automatically deploy it.
 
+## Architecture documentation
+
+[Read the full My Day Harbor architecture](docs/architecture.md) for the system overview, five diagrams, technology stack, routes and APIs, database schema, account security, news pipelines, fitness and nutrition rules, deployment workflow, validation, and current limitations. The document distinguishes the live release from disabled options and proposed future work.
+
 ## Current features
 - Original linked headlines from BBC News and The Economic Times RSS feeds.
 - World, Technology, AI, U.S. markets, and India markets views.
@@ -22,7 +26,7 @@ The GitHub repository contains the website source. The live website runs on Site
 - WebMCP read_current_news and set_news_interests when the browser supports them.
 - Public Communities tab with eight external startup programs and networks, practical guides and a six-stage idea-to-launch path. Browsing requires no sign-in; participation happens on the linked organizations' websites.
 
-- Private Fitness & Nutrition tab with ChatGPT sign-in, D1 meal/portion/activity logs, editable goals and dietary exclusions.
+- Private Fitness & Nutrition tab with personal email/username and password accounts, existing ChatGPT-linked access, D1 meal/portion/activity logs, editable goals and dietary exclusions.
 - USDA reference estimates for protein, fiber, magnesium, 13 vitamins (with documented form limits), amino acids, energy and other nutrients. Missing values remain unknown and each nutrient reports food coverage.
 - Seven-day food-log review and deterministic meal combinations ranked against logged protein, fiber and magnesium. No deficiency diagnosis or inferred intake on unlogged days.
 - Manual workout minutes, steps and user-reported calorie estimates. No Fitbit/phone-health connection yet.
