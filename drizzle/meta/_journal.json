@@ -8,6 +8,13 @@
       "when": 1789424206765,
       "tag": "0000_ordinary_harrier",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789683773214,
+      "tag": "0001_slow_blade",
+      "breakpoints": true
     }
   ]
 }

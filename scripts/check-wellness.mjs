@@ -10,7 +10,7 @@ try {
  for(const name of ['nutrients','wellness-types','nutrition','wellness-validation']){
   let text=ts.transpileModule(await readFile(`lib/${name}.ts`,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
   text=text.replace(/from ['"]\.\/([^'"]+)['"]/g,(_,file)=>file.endsWith('.json')?`from '${pathToFileURL(path.resolve('lib',file))}' with {type:'json'}`:`from './${file}.mjs'`);
-  text=text.replace("from 'zod'",`from '${pathToFileURL(path.resolve('node_modules/zod/index.js'))}'`);
+  text=text.replace("from 'zod/v3'",`from '${pathToFileURL(path.resolve('node_modules/zod/v3/index.js'))}'`);
   await writeFile(path.join(temp,`${name}.mjs`),text);
  }
  const {summarize,foodById,mealSuggestions}=await import(pathToFileURL(path.join(temp,'nutrition.mjs')));

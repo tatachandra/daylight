@@ -18,7 +18,7 @@ export function summarize(entries:LogEntry[]):NutritionSummary{
  for(const item of items){const food=item.foodId?foodById.get(item.foodId):undefined;if(!food||item.grams===null||item.certainty==='unknown')continue;
   for(const spec of specs){const value=spec.id==='energy'?(food.nutrients['1008']??food.nutrients['2048']??food.nutrients['2047']):food.nutrients[spec.id];
    if(value===undefined||!Number.isFinite(value)||value<0)continue;
-   const total=nutrients[spec.id];total.value=(total.value??0)+value*item.grams/100;total.covered++;
+   const total=nutrients[spec.id];total.value=(total.value??0)+value*item.grams/100/(spec.id==='1099'?1000:1);total.covered++;
   }
  }
  return {nutrients,items:items.length,estimatedPortions:items.filter(i=>i.certainty==='estimated').length,unknownPortions:items.filter(i=>i.grams===null).length,unlistedFoods:items.filter(i=>!i.foodId).length,mealCount:meals.length};
