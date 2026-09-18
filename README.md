@@ -75,7 +75,7 @@ Validation: scripts/check-fitness.mjs exercises calculations, health gates, diet
 
 ## Google sign-in
 
-Status: implementation and isolated tests are ready; Google Console policy acceptance, OAuth client setup, and live sign-in verification are still pending.
+Status: Google sign-in is disabled, and its setup has been stopped at the owner’s request. Existing email/username and password sign-in remains available. The optional implementation is retained in source but is not active on the website; no Google billing or trial was enabled.
 
 Google OAuth uses the existing Better Auth/D1 account tables; no new database or paid identity service is required. Configure a Google **Web application** OAuth client with the exact redirect URI `https://mydayharbor.com/api/account/callback/google`. Add `GOOGLE_CLIENT_ID` and the secret `GOOGLE_CLIENT_SECRET` to Sites runtime settings and deploy to activate the button. Without both values, the existing email/password flow remains available. Keep Google Cloud billing disabled; only basic `openid`, `email`, and `profile` scopes are requested, with online access.
 
