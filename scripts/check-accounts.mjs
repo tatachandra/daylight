@@ -36,7 +36,10 @@ r=await call('reset-password',{token,newPassword:password});assert.equal(r.ok,fa
 r=await call('get-session',null,cookie);data=await r.json();assert.equal(data,null);
 r=await call('sign-in/username',{username:'tester_one',password});assert.equal(r.ok,false);
 r=await call('sign-in/username',{username:'tester_one',password:newPassword});assert.equal(r.status,200);
+const freshCookie=r.headers.getSetCookie().map(s=>s.split(';')[0]).join('; ');
+r=await call('sign-out',{},freshCookie);assert.equal(r.status,200);assert.equal(await (await call('get-session',null,freshCookie)).json(),null);
 r=await call('request-password-reset',{email:'nobody@example.com',redirectTo:origin+'/account'});assert.equal(r.status,200);assert.equal(outbox.length,2);
-console.log('PASS: password validation/hashing, email verification, username login, secure cookies, cross-origin rejection, recovery, one-use reset tokens, session revocation, unknown-email recovery.');
+r=await call('sign-up/email',{name:'Second',username:'tester_two',email:'two@example.com',password,callbackURL:'/account'});assert.equal(r.status,200);const beforeResend=outbox.length;r=await call('send-verification-email',{email:'two@example.com',callbackURL:'/account'});assert.equal(r.status,200);assert.equal(outbox.length,beforeResend+1);
+console.log('PASS: successful sign-out invalidates session, resend verification email,  password validation/hashing, email verification, username login, secure cookies, cross-origin rejection, recovery, one-use reset tokens, session revocation, unknown-email recovery.');
 
 } finally {if(mf)await mf.dispose();}

@@ -1,3 +1,4 @@
+import './welcome.css';
 import BrandMark from '@/app/brand-mark';
 import {chatGPTSignOutPath} from '@/app/chatgpt-auth';
 import {getSiteUser} from '@/lib/accounts';
