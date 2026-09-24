@@ -6,9 +6,9 @@ export const metadata: Metadata = {
   title: "My Day Harbor — News, Wellbeing & Growth",
   description: "Your daily place for personalized news, fitness and nutrition, and communities for personal growth.",
   icons: {
-    icon: {url: "/balanced-leaves.png", type: "image/png"},
-    shortcut: "/balanced-leaves.png",
-    apple: "/balanced-leaves.png",
+    icon: {url: "/green-leaves-v2.png", type: "image/png"},
+    shortcut: "/green-leaves-v2.png",
+    apple: "/green-leaves-v2.png",
   },
 };
 

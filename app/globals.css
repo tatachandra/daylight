@@ -10,8 +10,8 @@
 
 /* The full brand remains readable beside navigation at every screen size. */
 .site-shell .wordmark.site-brand,.original-daylight .op-logo.site-brand{font-size:29px;letter-spacing:-1px;font-weight:650;flex-shrink:0;white-space:nowrap;gap:9px;color:#80532f}
-.brand-mark{display:block;flex-shrink:0;width:48px;height:48px;object-fit:contain;background:#fff;border-radius:11px;padding:3px}.brand-mark.brand-mark-small{width:34px;height:34px;border-radius:8px;padding:2px}
+.brand-mark{display:block;flex-shrink:0;width:40px;height:40px;object-fit:contain}.brand-mark.brand-mark-small{width:30px;height:30px}
 @media(max-width:1100px) and (min-width:761px){.original-daylight .op-header{flex-wrap:wrap;padding-top:20px}.original-daylight .op-app-nav{order:3;flex-basis:100%;margin:0 0 15px}.site-shell .masthead:has(.site-brand){flex-wrap:wrap;padding-top:20px}.site-shell .masthead:has(.site-brand) .primary-nav{order:3;flex-basis:100%;margin-left:0;min-height:52px}}
-@media(max-width:760px){.site-shell .wordmark.site-brand,.original-daylight .op-logo.site-brand{font-size:26px;letter-spacing:-.9px}.site-brand>.brand-mark{width:40px;height:40px;border-radius:9px}.original-daylight .op-footer>span{font-size:1.15rem}}
+@media(max-width:760px){.site-shell .wordmark.site-brand,.original-daylight .op-logo.site-brand{font-size:26px;letter-spacing:-.9px}.site-brand>.brand-mark{width:34px;height:34px}.original-daylight .op-footer>span{font-size:1.15rem}}
 @media(max-width:500px){.original-daylight .op-interests>span{display:none}.original-daylight .op-interests{width:42px;height:42px;min-width:42px;padding:0;justify-content:center}.site-shell .masthead:has(.site-brand) .account-link{font-size:13px}}
 @media(max-width:350px){.site-shell .wordmark.site-brand,.original-daylight .op-logo.site-brand{font-size:24px}.site-shell .masthead:has(.site-brand) .account-link{margin-left:0}}
