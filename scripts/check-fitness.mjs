@@ -13,7 +13,7 @@ try{
  for(const sql of (await readFile('drizzle/0000_great_pestilence.sql','utf8').catch(async()=>{const {readdir}=await import('node:fs/promises');const f=(await readdir('drizzle')).find(x=>x.startsWith('0000')&&x.endsWith('.sql'));return readFile('drizzle/'+f,'utf8');})).split('--> statement-breakpoint'))if(sql.trim())await db.prepare(sql).run();
  await writeFile(path.join(temp,'accounts.mjs'),'export async function getSiteUser(){return globalThis.fitnessTestUser}');
  await writeFile(path.join(temp,'wellness.mjs'),'export function wellnessDb(){return globalThis.fitnessTestDb}');
- const files=['nutrients','wellness-types','nutrition','wellness-validation','fitness-profile','fitness-plan'];
+ const files=['request-body','nutrients','wellness-types','nutrition','wellness-validation','fitness-profile','fitness-plan'];
  for(const name of [...files,'fitness-route','wellness-route']){
  const source=name==='fitness-route'?'app/api/fitness/route.ts':name==='wellness-route'?'app/api/wellness/route.ts':`lib/${name}.ts`;
  let text=ts.transpileModule(await readFile(source,'utf8'),{compilerOptions:{module:ts.ModuleKind.ESNext,target:ts.ScriptTarget.ES2022}}).outputText;
@@ -33,7 +33,7 @@ try{
  const record={profile:p,startedAt:'2026-08-01',baselineWeight:70,reviews:[]};const workout=workoutFor(record,[],'2026-09-17');assert.equal(workout.sets,2);assert.equal(workoutFor({...record,profile:{...p,days:2}},[],'2026-09-17').schedule.filter(s=>s.minutes>0).length,2);
  assert.equal(workoutFor({...record,reviews:[{day:'2026-09-17',pain:true,recovery:'good',effort:'easy'}]},[],'2026-09-17').held,true);
  const route=await import(pathToFileURL(path.join(temp,'fitness-route.mjs')));const wellness=await import(pathToFileURL(path.join(temp,'wellness-route.mjs')));const origin='https://test.example';
- const post=(data,o=origin)=>route.POST(new Request(origin+'/api/fitness',{method:'POST',headers:{Origin:o,'Content-Type':'application/json'},body:JSON.stringify(data)}));const get=()=>route.GET(new Request(origin+'/api/fitness?day=2026-09-17'));
+ const post=async(data,o=origin)=>route.POST(new Request(origin+'/api/fitness',{method:'POST',headers:{Origin:o,'Content-Type':'application/json'},body:JSON.stringify({...data,version:(await (await route.GET(new Request(origin+'/api/fitness?day=2026-09-17'))).json()).version??null})}));const get=()=>route.GET(new Request(origin+'/api/fitness?day=2026-09-17'));
  globalThis.fitnessTestUser=null;assert.equal((await get()).status,401);globalThis.fitnessTestUser={userId:'synthetic-a'};
  assert.equal((await post({action:'profile',profile:p,day:'2026-09-17'},'https://other.example')).status,403);
  assert.equal((await post({action:'profile',profile:p,day:'2026-09-17'})).status,200);
@@ -42,5 +42,14 @@ try{
  const settings={targets:{protein:50,fiber:28,magnesium:420},diet:'vegan',avoid:[]};assert.equal((await wellness.POST(new Request(origin+'/api/wellness',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({action:'save-settings',settings})}))).status,200);assert.equal((await (await get()).json()).record.profile.name,'Synthetic');
  assert.equal((await post({action:'review',day:'2026-09-17',review:{day:'2026-09-17',weight:71,effort:'manageable',pain:false,recovery:'good',notes:'Test'}})).status,200);assert.equal((await (await get()).json()).record.profile.weight,71);
  assert.equal((await post({action:'delete-profile',day:'2026-09-17'})).status,200);assert.equal((await (await get()).json()).record,null);
+ const snap=await (await get()).json();
+ const concurrent=()=>route.POST(new Request(origin+'/api/fitness',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({action:'profile',profile:p,day:'2026-09-17',version:snap.version})}));
+ const outcomes=await Promise.all([concurrent(),concurrent()]);assert.deepEqual(outcomes.map(r=>r.status).sort(),[200,409]);
+ const stale=await concurrent();assert.equal(stale.status,409);
+ const oversized=await route.POST(new Request(origin+'/api/fitness',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:'x'.repeat(12001)}));assert.equal(oversized.status,413);
+ for(let start=0;start<1501;start+=100){const batch=[];for(let i=start;i<Math.min(start+100,1501);i++)batch.push(db.prepare('INSERT INTO wellness_entries(id,user_id,day,kind,data_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?)').bind('bulk-'+i,'synthetic-a','2026-09-17','workout',JSON.stringify({type:'workout',activity:'Walk',minutes:1}),'2026-09-17','2026-09-17'));await db.batch(batch);}
+ assert.equal((await get()).status,422);
+ assert.equal((await wellness.GET(new Request(origin+'/api/wellness?from=2026-09-17&to=2026-09-17'))).status,422);
+ console.log('PASS: concurrent profile saves, stale-version rejection, streamed request limit, and oversized-history error instead of partial totals.');
  console.log('PASS: energy/age/sex calculations, medical gates, food portions, diet/allergen exclusions, schedule limits, recovery rules, private D1 profile/review persistence, cross-user isolation, CSRF and legacy-setting preservation.');
 }finally{delete globalThis.fitnessTestDb;delete globalThis.fitnessTestUser;await mf.dispose();await rm(temp,{recursive:true,force:true});}

@@ -1,3 +1,5 @@
+import {cachedPublicFeed} from './public-feed-cache';
+import {readBoundedBody} from './request-body';
 export const TOPICS = ['World', 'Technology', 'AI', 'U.S. markets', 'India markets'] as const;
 export type Topic = typeof TOPICS[number];
 export type Story = { id: string; title: string; url: string; published: string; topics: Topic[]; source: string; sourceUrl: string; image?: { url: string; originalUrl: string } };
@@ -47,19 +49,21 @@ export function parseFeed(xml: string, feed: typeof SOURCES[number]): Story[] {
 let cached:NewsData|undefined;
 let pending:Promise<NewsData>|undefined;
 let retryAfter=0;
-export async function getNews():Promise<NewsData>{
+async function loadNews():Promise<NewsData>{
   if(cached&&(Date.now()-Date.parse(cached.checkedAt)<300000||Date.now()<retryAfter))return cached;
   if(pending)return pending;
   pending=(async()=>{
     const results=await Promise.allSettled(SOURCES.map(async source=>{
       const response=await fetch(source.url,{headers:{Accept:'application/rss+xml, application/xml'},signal:AbortSignal.timeout(9000)});
       if(!response.ok)throw Error('Feed unavailable');
-      const stories=parseFeed(await response.text(),source);if(!stories.length)throw Error('Empty feed');return stories;
+      const stories=parseFeed(await readBoundedBody(response,2000000),source);if(!stories.length)throw Error('Empty feed');return stories;
     }));
     const merged=new Map<string,Story>();const unavailable:string[]=[];
     results.forEach((result,i)=>{if(result.status==='rejected'){unavailable.push(SOURCES[i].name);return;}result.value.forEach(story=>{const prior=merged.get(story.id);merged.set(story.id,prior?{...prior,topics:[...new Set([...prior.topics,...story.topics])]}:story);});});
     const data={stories:[...merged.values()].sort((a,b)=>Date.parse(b.published)-Date.parse(a.published)),checkedAt:new Date().toISOString(),unavailable};
     if(!data.stories.length&&cached){cached={...cached,unavailable,stale:true};retryAfter=Date.now()+60000;return cached;}
-    if(data.stories.length)cached=data;return data;
+    cached=data;if(!data.stories.length)retryAfter=Date.now()+60000;return data;
   })();try{return await pending;}finally{pending=undefined;}
 }
+
+export function getNews(){return cachedPublicFeed('news-v1',300,loadNews,data=>data.stories.length>0,data=>({...data,stale:true}));}

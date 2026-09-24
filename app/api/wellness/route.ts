@@ -1,3 +1,4 @@
+import {readBoundedBody} from '@/lib/request-body';
 import {getSiteUser} from '@/lib/accounts';
 import {wellnessDb} from '@/db/wellness';
 import {daySchema,mutationSchema} from '@/lib/wellness-validation';
@@ -12,10 +13,10 @@ export async function GET(request:Request){
  const url=new URL(request.url);const from=daySchema.safeParse(url.searchParams.get('from'));const to=daySchema.safeParse(url.searchParams.get('to'));
  if(!from.success||!to.success||from.data>to.data||(Date.parse(to.data)-Date.parse(from.data))>31*86400000)return response({error:'Choose a date range of up to 31 days.'},400);
  try{const db=wellnessDb();const [entryRows,settingRow,dayRows]=await Promise.all([
-   db.prepare('SELECT id,day,data_json,created_at FROM wellness_entries WHERE user_id=? AND day>=? AND day<=? ORDER BY day DESC,created_at DESC LIMIT 1000').bind(user.userId,from.data,to.data).all<{id:string;day:string;data_json:string;created_at:string}>(),
+   db.prepare('SELECT id,day,data_json,created_at FROM wellness_entries WHERE user_id=? AND day>=? AND day<=? ORDER BY day DESC,created_at DESC LIMIT 1001').bind(user.userId,from.data,to.data).all<{id:string;day:string;data_json:string;created_at:string}>(),
    db.prepare('SELECT data_json FROM wellness_settings WHERE user_id=?').bind(user.userId).first<{data_json:string}>(),
    db.prepare('SELECT day FROM wellness_days WHERE user_id=? AND day>=? AND day<=? AND complete=1').bind(user.userId,from.data,to.data).all<{day:string}>(),
- ]);const entries:LogEntry[]=entryRows.results.map(row=>({id:row.id,day:row.day,data:JSON.parse(row.data_json),createdAt:row.created_at}));const stored=settingRow?JSON.parse(settingRow.data_json):DEFAULT_SETTINGS;const settings:WellnessSettings={targets:stored.targets,diet:stored.diet,avoid:stored.avoid};
+ ]);if(entryRows.results.length>1000)return response({error:'This date range contains too many entries to calculate completely. Choose a shorter date range.'},422);const entries:LogEntry[]=entryRows.results.map(row=>({id:row.id,day:row.day,data:JSON.parse(row.data_json),createdAt:row.created_at}));const stored=settingRow?JSON.parse(settingRow.data_json):DEFAULT_SETTINGS;const settings:WellnessSettings={targets:stored.targets,diet:stored.diet,avoid:stored.avoid};
  const fitness=settingRow?(JSON.parse(settingRow.data_json).fitness as FitnessRecord|null):null;const auto=fitness?targetsFor(fitness.profile):null;if(fitness){settings.diet=fitness.profile.diet==='vegan'?'vegan':'any';settings.avoid=fitness.profile.avoid;if(auto)settings.targets={protein:auto.protein,fiber:auto.values['1079'],magnesium:auto.values['1090']};}
  const completeDays=dayRows.results.map(row=>row.day);
  const history=[...new Set(entries.map(e=>e.day))].map(day=>({day,summary:summarize(entries.filter(e=>e.day===day))}));
@@ -26,7 +27,7 @@ export async function POST(request:Request){
  const user=await getSiteUser();if(!user)return response({error:'Sign in before saving your private logs.'},401);
  const origin=request.headers.get('origin');if((origin&&origin!==new URL(request.url).origin)||request.headers.get('sec-fetch-site')==='cross-site')return response({error:'Request not allowed.'},403);
  if(!request.headers.get('content-type')?.includes('application/json'))return response({error:'JSON is required.'},415);
- const text=await request.text();if(text.length>50000)return response({error:'This entry is too large.'},413);
+ let text:string;try{text=await readBoundedBody(request,50000);}catch{return response({error:'This entry is too large or could not be read.'},413);}
  let input;try{input=mutationSchema.safeParse(JSON.parse(text));}catch{return response({error:'Could not read this entry.'},400);}
  if(!input.success)return response({error:input.error.issues[0]?.message||'Check the fields and try again.'},400);
  try{const db=wellnessDb();const now=new Date().toISOString();const action=input.data;

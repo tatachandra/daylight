@@ -1,3 +1,4 @@
+import {cachedPublicFeed} from './public-feed-cache';
 import {TECH_SOURCES, TECH_LEADERS, type TechSource, type TechPost, type TechFeed, type TechCategory} from './tech-leaders-types';
 
 const INTERVAL = 300000;
@@ -104,4 +105,5 @@ export function createTechFeedLoader(fetcher: typeof fetch = fetch, now: () => n
     pending.set(leaderId,task);try { return await task; } finally { pending.delete(leaderId); }
   };
 }
-export const getTechFeed = createTechFeedLoader();
+const loadTechFeed=createTechFeedLoader();
+export function getTechFeed(leaderId='all'){return cachedPublicFeed('leaders-v1-'+leaderId,60,()=>loadTechFeed(leaderId),data=>data.posts.length>0,data=>({...data,sources:data.sources.map(source=>({...source,status:source.count?'cached' as const:'unavailable' as const}))}));}

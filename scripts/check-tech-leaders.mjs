@@ -8,7 +8,7 @@ function load(file){
   if(loaded.has(file))return loaded.get(file).exports;
   const module={exports:{}};loaded.set(file,module);
   const code=ts.transpileModule(readFileSync(new URL('../'+file,import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-  vm.runInNewContext(code,{module,exports:module.exports,require:name=>name==='./tech-leaders-types'?load('lib/tech-leaders-types.ts'):require(name),Date,URL,URLSearchParams,TextDecoder,AbortSignal,fetch,Response},{filename:file});return module.exports;
+  vm.runInNewContext(code,{module,exports:module.exports,require:name=>name.startsWith('./')?load('lib/'+name.slice(2)+'.ts'):require(name),Date,URL,URLSearchParams,TextDecoder,AbortSignal,fetch,Response},{filename:file});return module.exports;
 }
 const {TECH_SOURCES,TECH_LEADERS}=load('lib/tech-leaders-types.ts');
 const {LEADER_PORTRAITS}=load('lib/tech-leader-portraits.ts');
