@@ -1,6 +1,6 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
-import {ArrowUpRight,RotateCw,Newspaper,Utensils,Users,Radio,ExternalLink} from 'lucide-react';
+import {ArrowUpRight,RotateCw,Monitor,Newspaper,Utensils,Users,Radio,ExternalLink} from 'lucide-react';
 import BrandMark from '@/app/brand-mark';
 import NewsViews from '@/app/news-views';
 import {LocalTimestamp,LocalToday} from '@/app/device-time';
@@ -45,7 +45,7 @@ export default function TechLeaders({initial}:{initial:TechFeed}) {
   const problem=showingSelection?data.sources.filter(source=>source.status!=='available'):[];
   const person=TECH_LEADERS.find(person=>person.id===leaderId);
   return <div className="original-daylight op-palette-scope tech-leaders" data-palette="cream"><div className="op-shell">
-    <header className="op-header"><a className="op-logo site-brand" href="/"><BrandMark/><span>My Day Harbor</span></a><nav aria-label="Main navigation" className="op-app-nav"><a href="/" aria-current="page"><Newspaper size={17}/>News</a><a href="/wellness"><Utensils size={17}/>Fitness &amp; Nutrition</a><a href="/communities"><Users size={17}/>Communities</a></nav></header>
+    <header className="op-header"><a className="op-logo site-brand" href="/"><BrandMark/><span>My Day Harbor</span></a><nav aria-label="Main navigation" className="op-app-nav"><a href="/" aria-current="page"><Newspaper size={17}/>News</a><a href="/wellness"><Utensils size={17}/>Fitness &amp; Nutrition</a><a href="/communities"><Users size={17}/>Communities</a><a href="/local-help"><Monitor size={17}/>Near You</a></nav></header>
     <main><NewsViews active="leaders"/><div className="op-intro tl-intro"><div><p className="op-eyebrow"><LocalToday/></p><h1>Tech Leaders<span>.</span></h1><p className="tl-intro-copy">Posts about the people shaping technology.</p></div><Button variant="outline" className="tl-refresh" onClick={()=>void refresh()} disabled={busy}><RotateCw size={16} className={busy?'spinning':''}/>{busy?'Checking':'Refresh'}</Button></div>
       <p className="tl-scope">From company blogs and news publishers. Choose a leader below.</p>
       <Tabs value={active} onValueChange={value=>{setActive(value as TechCategory);setLimit(10);}} className="tl-layout"><aside className="tl-sidebar"><span className="op-eyebrow">Explore technology</span><TabsList className="tl-categories" aria-label="Technology categories">{TECH_CATEGORIES.map(category=><TabsTrigger key={category} value={category}>{category}</TabsTrigger>)}</TabsList>
